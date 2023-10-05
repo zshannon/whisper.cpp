@@ -23,9 +23,10 @@ actor WhisperContext {
         var params = whisper_full_default_params(WHISPER_SAMPLING_GREEDY)
         "en".withCString { en in
             // Adapted from whisper.objc
-            params.print_realtime = true
+            params.print_realtime = false
             params.print_progress = false
-            params.print_timestamps = true
+            params.print_timestamps = false
+            params.max_tokens = 0
             params.print_special = false
             params.translate = false
             params.language = en
@@ -34,13 +35,13 @@ actor WhisperContext {
             params.no_context = true
             params.single_segment = false
             
-            whisper_reset_timings(context)
-            print("About to run whisper_full")
+//            whisper_reset_timings(context)
+            print("About to run whisper_full: \(samples.count)")
             samples.withUnsafeBufferPointer { samples in
                 if (whisper_full(context, params, samples.baseAddress, Int32(samples.count)) != 0) {
                     print("Failed to run the model")
                 } else {
-                    whisper_print_timings(context)
+//                    whisper_print_timings(context)
                 }
             }
         }
