@@ -35,13 +35,13 @@ actor WhisperContext {
             params.no_context = true
             params.single_segment = false
             
-//            whisper_reset_timings(context)
+            whisper_reset_timings(context)
             print("About to run whisper_full: \(samples.count)")
             samples.withUnsafeBufferPointer { samples in
                 if (whisper_full(context, params, samples.baseAddress, Int32(samples.count)) != 0) {
                     print("Failed to run the model")
                 } else {
-//                    whisper_print_timings(context)
+                    whisper_print_timings(context)
                 }
             }
         }

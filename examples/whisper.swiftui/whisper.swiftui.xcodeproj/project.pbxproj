@@ -21,6 +21,7 @@
 		0AAC5DD12953A394003032C3 /* LibWhisper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0AAC5DD02953A394003032C3 /* LibWhisper.swift */; };
 		11077A2C2ACE3882005D97E8 /* ggml-base.en.bin in Resources */ = {isa = PBXBuildFile; fileRef = 11077A2B2ACE3882005D97E8 /* ggml-base.en.bin */; };
 		11077A302ACE3993005D97E8 /* samples in Resources */ = {isa = PBXBuildFile; fileRef = 11077A2F2ACE3993005D97E8 /* samples */; };
+		11077A322ACF5CBD005D97E8 /* ggml-tiny.en.bin in Resources */ = {isa = PBXBuildFile; fileRef = 11077A312ACF5CBD005D97E8 /* ggml-tiny.en.bin */; };
 		18AED4812AB21F2B009D854F /* ggml-alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 18AED47F2AB21F2B009D854F /* ggml-alloc.c */; };
 /* End PBXBuildFile section */
 
@@ -44,6 +45,7 @@
 		0AAC5DD02953A394003032C3 /* LibWhisper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LibWhisper.swift; sourceTree = "<group>"; };
 		11077A2B2ACE3882005D97E8 /* ggml-base.en.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = "ggml-base.en.bin"; path = "../../models/ggml-base.en.bin"; sourceTree = "<group>"; };
 		11077A2F2ACE3993005D97E8 /* samples */ = {isa = PBXFileReference; lastKnownFileType = folder; name = samples; path = ../../samples; sourceTree = "<group>"; };
+		11077A312ACF5CBD005D97E8 /* ggml-tiny.en.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = "ggml-tiny.en.bin"; path = "../../models/ggml-tiny.en.bin"; sourceTree = "<group>"; };
 		18AED47F2AB21F2B009D854F /* ggml-alloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "ggml-alloc.c"; sourceTree = "<group>"; };
 		18AED4802AB21F2B009D854F /* ggml-alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ggml-alloc.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -87,6 +89,7 @@
 		0AAC5D8E29539CCF003032C3 = {
 			isa = PBXGroup;
 			children = (
+				11077A312ACF5CBD005D97E8 /* ggml-tiny.en.bin */,
 				11077A2F2ACE3993005D97E8 /* samples */,
 				11077A2B2ACE3882005D97E8 /* ggml-base.en.bin */,
 				0A8E48FF2954B3F100704C1B /* README.md */,
@@ -230,6 +233,7 @@
 				0AAC5DA329539CD0003032C3 /* Preview Assets.xcassets in Resources */,
 				11077A302ACE3993005D97E8 /* samples in Resources */,
 				0A8E49002954B3F100704C1B /* README.md in Resources */,
+				11077A322ACF5CBD005D97E8 /* ggml-tiny.en.bin in Resources */,
 				0AA751492953AC2E001EE061 /* models in Resources */,
 				0AAC5D9F29539CD0003032C3 /* Assets.xcassets in Resources */,
 				11077A2C2ACE3882005D97E8 /* ggml-base.en.bin in Resources */,
