@@ -4,7 +4,7 @@ import Foundation
 import SwiftUI
 
 struct WhisperResult: Equatable {
-    let probability: Float
+    var probability: Float
     let text: String
     let token: whisper_token
     var t0: Int64
@@ -65,7 +65,6 @@ actor WhisperStream {
                                     to - Int(
                                         (self.freq * self.window) * 2 * 16000
                                     )) // get last window only
-                print("[\(from)->\(to)]")
                 guard from < to else { return }
                 if let samples = try? decodeWaveFile(
                     self.source,
@@ -87,18 +86,30 @@ actor WhisperStream {
                                 isValidUTF8String($0.text)
                         }
                     let ts0 = Int64(from / (2 * 16))
-                    let ts1 = Int64(to / (2 * 16)) - ts0
-                    print("[\(ts0)-->\(ts1)] \(results.count)")
+                    let maxTs = Int64(to / (2 * 16))
+                    let windowLength: Int64 = maxTs - ts0
                     if results.count > 0 {
-                        // TODO: fudge back t0,t1
                         for idx in results.indices {
                             let result: WhisperResult = results[idx]
-                            print(result.text, ts0, ts1, result.t0, result.t1)
-                            results[idx].t0 = ts0 + result.t0 // add from
-                            results[idx].t1 = ts0 + min(ts1, result.t1) // min with to
-                        }
+                            let length: Int64 = result.t1 - result.t0
+                            results[idx].t0 = min(ts0 + result.t0, ts0 + windowLength)
+                            let kysApple: Int64 = results[idx].t0 + min(windowLength, length)
+                            results[idx].t1 = min(kysApple, maxTs)
+                            print(
+                                result.text,
+                                ts0,
+                                windowLength,
+                                length,
+                                results[idx].t0,
+                                results[idx].t1,
+                                results[idx].probability
+                            )
 
-//                        // unclear if resetting the state matters
+                            // lol maybe forget the precision and do sequence overlapping later
+                            results[idx].t0 = ts0
+                            results[idx].t1 = maxTs
+                        }
+                        // unclear if resetting the state matters
                         whisper_free_state(state)
                         self.state = whisper_init_state(context)
                     }
@@ -172,6 +183,7 @@ class WhisperState: NSObject, ObservableObject, AVAudioRecorderDelegate {
     @Published private var tiny: [WhisperResult] = []
     @Published private var tinyMerged: [WhisperResult] = []
 
+    private var vad = WebRTCVAD()
     private var whisperContext: WhisperContext?
     private let recorder = Recorder()
     private var recordedFile: URL? = nil
@@ -210,21 +222,95 @@ class WhisperState: NSObject, ObservableObject, AVAudioRecorderDelegate {
                 $0.t0 < $1.t0
             }))
         }.store(in: &cancellables)
+        var z = 0
         $base.sink { new in
-            var next = self.baseMerged
-//            for current in new {
-//                if let overlappingPreviousValueIdx = next.firstIndex(where: {
-//                    $0.t0 <= current.t0 && $0.t1 >= current.t0 && $0 != current
-//                }) {
-//                    let overlappingPreviousValue = next[overlappingPreviousValueIdx]
-//                    if overlappingPreviousValue.probability < current.probability {
-//                        next[overlappingPreviousValueIdx] = current
+            z += 1
+            guard new.count > 0 else { return }
+            let prev = self.baseMerged
+            var newIdx = 0
+            var merged: [WhisperResult] = []
+            if prev.first?.t0 == new.first?.t0 {
+                var oldIdx = 0
+                // go through each new value and if same as old value, use old value
+                for (i, current) in new.enumerated() {
+                    if oldIdx < prev.count {
+                        var old = prev[oldIdx]
+                        if old.text == current.text {
+                            old.probability = max(old.probability, current.probability)
+                            merged.append(old)
+                            oldIdx += 1
+                            continue
+                        }
+                    }
+                    merged.append(current)
+                }
+                
+                self.baseMerged = merged
+                return
+            }
+            
+            print("\(z) prev: ", prev.map({ [$0.text, $0.probability, $0.t1] }))
+            print("\(z) new: ", new.map({ [$0.text, $0.probability, $0.t0] }))
+            
+            // TODO: find start of overlap
+            
+            
+            for (i, result) in prev.enumerated() {
+                if newIdx < new.count {
+                    let newResult = new[newIdx]
+                    if result.t1 < newResult.t0 {
+                        merged.append(result)
+                        print("\(z) kept: ", result.text)
+                        continue
+                    }
+                    if result.t1 == newResult.t0 {
+                        if result.text == newResult.text {
+                            merged.append(result)
+                            newIdx += 1
+                            print("\(z) kept2: ", result.text)
+                            continue
+                        }
+                    }
+//                    if newIdx > 0 {
+//                        newIdx += 1
+//                        merged.append(newResult)
+//                        continue
 //                    }
-//                } else {
-//                    next.append(current)
-//                }
+                    print("\(z) evaluating: (\(i), \(newIdx))", result.text, newResult.text)
+                    // NB: maybe this is wrong and we want to use the new result instead of the old one but not sure yet
+                    if result.text == newResult.text || newResult.probability <= result.probability {
+                        print("\(z) selecting: ", (newResult.probability < result.probability ? result : newResult).text)
+                        newIdx += 1
+                        merged.append(newResult.probability < result.probability ? result : newResult)
+                    }
+                    else {
+                        print("\(z) selecting: ", newResult.text)
+                        newIdx += 1
+                        merged.append(newResult)
+                    }
+                }
+                else { break }
+            }
+            if newIdx < new.count {
+                print("\(z) newIdx", newIdx, new.suffix(from: newIdx))
+                merged.append(contentsOf: new.suffix(from: newIdx))
+            }
+            
+            self.baseMerged = Array(merged)
+//            var old = self.baseMerged.filter { x in
+//                guard let f = new.first else { return true }
+//                return x.t0 < f.t0
 //            }
-            self.baseMerged = (next + new)//.sorted(by: { $0.t0 < $1.t0 })
+//
+//            // 1. if any next are before first new, keep
+//
+//            self.baseMerged = new.reduce(old) { partialResult, current in
+//                if partialResult.first(where: { x in
+//                    x.text == current.text && (x.t0 >= current.t0 || x.t1 <= current.t1)
+//                }) != nil { return partialResult }
+//                
+//                return partialResult + [current]
+//            }
 //            print("prev: ", prev.map({ $0.text }).joined())
 //            print("next: ", next.map({ $0.text }).joined())
 //
@@ -239,8 +325,9 @@ class WhisperState: NSObject, ObservableObject, AVAudioRecorderDelegate {
             $baseMerged,
             $tinyMerged
         ).sink { base, _ in
-            self.messageLog += base // mergeStreams(stream1: base, stream2: tiny, weight: 3.0)
-                .map { "\($0.text) (\($0.t0)-\($0.t1), \(round($0.probability * 100) / 100.0))" }.joined() + "\n\n"
+            self.messageLog += "\(z) " + base // mergeStreams(stream1: base, stream2: tiny, weight: 3.0)
+                .map { "\($0.text) (\($0.t0)-\($0.t1), \(round($0.probability * 100) / 100.0))" }
+                .joined() + "\n\n"
         }.store(in: &cancellables)
         if let source = sampleUrl,
            let baseModel: URL = Bundle.main.url(forResource: "ggml-base.en", withExtension: "bin"),

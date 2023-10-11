@@ -22,6 +22,10 @@
 		11077A2C2ACE3882005D97E8 /* ggml-base.en.bin in Resources */ = {isa = PBXBuildFile; fileRef = 11077A2B2ACE3882005D97E8 /* ggml-base.en.bin */; };
 		11077A302ACE3993005D97E8 /* samples in Resources */ = {isa = PBXBuildFile; fileRef = 11077A2F2ACE3993005D97E8 /* samples */; };
 		11077A322ACF5CBD005D97E8 /* ggml-tiny.en.bin in Resources */ = {isa = PBXBuildFile; fileRef = 11077A312ACF5CBD005D97E8 /* ggml-tiny.en.bin */; };
+		11CFCDAB2AD536080022B39F /* silero_vad.onnx in Resources */ = {isa = PBXBuildFile; fileRef = 11CFCDAA2AD536080022B39F /* silero_vad.onnx */; };
+		11CFCDAD2AD536340022B39F /* SileroVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11CFCDAC2AD536340022B39F /* SileroVAD.swift */; };
+		11CFCDB02AD5C94B0022B39F /* WebRTC in Frameworks */ = {isa = PBXBuildFile; productRef = 11CFCDAF2AD5C94B0022B39F /* WebRTC */; };
+		11CFCDB22AD5C9660022B39F /* WebRTCVAD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 11CFCDB12AD5C9660022B39F /* WebRTCVAD.swift */; };
 		18AED4812AB21F2B009D854F /* ggml-alloc.c in Sources */ = {isa = PBXBuildFile; fileRef = 18AED47F2AB21F2B009D854F /* ggml-alloc.c */; };
 /* End PBXBuildFile section */
 
@@ -46,6 +50,9 @@
 		11077A2B2ACE3882005D97E8 /* ggml-base.en.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = "ggml-base.en.bin"; path = "../../models/ggml-base.en.bin"; sourceTree = "<group>"; };
 		11077A2F2ACE3993005D97E8 /* samples */ = {isa = PBXFileReference; lastKnownFileType = folder; name = samples; path = ../../samples; sourceTree = "<group>"; };
 		11077A312ACF5CBD005D97E8 /* ggml-tiny.en.bin */ = {isa = PBXFileReference; lastKnownFileType = archive.macbinary; name = "ggml-tiny.en.bin"; path = "../../models/ggml-tiny.en.bin"; sourceTree = "<group>"; };
+		11CFCDAA2AD536080022B39F /* silero_vad.onnx */ = {isa = PBXFileReference; lastKnownFileType = file; path = silero_vad.onnx; sourceTree = "<group>"; };
+		11CFCDAC2AD536340022B39F /* SileroVAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SileroVAD.swift; sourceTree = "<group>"; };
+		11CFCDB12AD5C9660022B39F /* WebRTCVAD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WebRTCVAD.swift; sourceTree = "<group>"; };
 		18AED47F2AB21F2B009D854F /* ggml-alloc.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = "ggml-alloc.c"; sourceTree = "<group>"; };
 		18AED4802AB21F2B009D854F /* ggml-alloc.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ggml-alloc.h"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -55,6 +62,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11CFCDB02AD5C94B0022B39F /* WebRTC in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -65,6 +73,8 @@
 			isa = PBXGroup;
 			children = (
 				0AAC5DCD2953A05C003032C3 /* WhisperState.swift */,
+				11CFCDAC2AD536340022B39F /* SileroVAD.swift */,
+				11CFCDB12AD5C9660022B39F /* WebRTCVAD.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -164,6 +174,7 @@
 		0AAC5DD32953A9ED003032C3 /* Supporting files */ = {
 			isa = PBXGroup;
 			children = (
+				11CFCDAA2AD536080022B39F /* silero_vad.onnx */,
 				0AAC5D9E29539CD0003032C3 /* Assets.xcassets */,
 				0AAC5DA029539CD0003032C3 /* WhisperCppDemo.entitlements */,
 				0AAC5DA129539CD0003032C3 /* Preview Content */,
@@ -187,6 +198,9 @@
 			dependencies = (
 			);
 			name = whisper.swiftui;
+			packageProductDependencies = (
+				11CFCDAF2AD5C94B0022B39F /* WebRTC */,
+			);
 			productName = WhisperCppDemo;
 			productReference = 0AAC5D9729539CCF003032C3 /* whisper.swiftui.app */;
 			productType = "com.apple.product-type.application";
@@ -216,6 +230,9 @@
 				Base,
 			);
 			mainGroup = 0AAC5D8E29539CCF003032C3;
+			packageReferences = (
+				11CFCDAE2AD5C94B0022B39F /* XCRemoteSwiftPackageReference "WebRTC" */,
+			);
 			productRefGroup = 0AAC5D9829539CCF003032C3 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -230,6 +247,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				11CFCDAB2AD536080022B39F /* silero_vad.onnx in Resources */,
 				0AAC5DA329539CD0003032C3 /* Preview Assets.xcassets in Resources */,
 				11077A302ACE3993005D97E8 /* samples in Resources */,
 				0A8E49002954B3F100704C1B /* README.md in Resources */,
@@ -250,12 +268,14 @@
 				0AAC5D9D29539CCF003032C3 /* ContentView.swift in Sources */,
 				0AAC5D9B29539CCF003032C3 /* WhisperCppDemoApp.swift in Sources */,
 				0AAC5DCC29539EB1003032C3 /* ggml.c in Sources */,
+				11CFCDB22AD5C9660022B39F /* WebRTCVAD.swift in Sources */,
 				0AAC5DCE2953A05C003032C3 /* WhisperState.swift in Sources */,
 				0AAC5DD12953A394003032C3 /* LibWhisper.swift in Sources */,
 				0AA7514C2953B569001EE061 /* RiffWaveUtils.swift in Sources */,
 				0AAC5DCB29539EB1003032C3 /* whisper.cpp in Sources */,
 				0AA7514E2953D958001EE061 /* Recorder.swift in Sources */,
 				18AED4812AB21F2B009D854F /* ggml-alloc.c in Sources */,
+				11CFCDAD2AD536340022B39F /* SileroVAD.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -481,6 +501,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		11CFCDAE2AD5C94B0022B39F /* XCRemoteSwiftPackageReference "WebRTC" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/stasel/WebRTC";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 117.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		11CFCDAF2AD5C94B0022B39F /* WebRTC */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 11CFCDAE2AD5C94B0022B39F /* XCRemoteSwiftPackageReference "WebRTC" */;
+			productName = WebRTC;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 0AAC5D8F29539CCF003032C3 /* Project object */;
 }
