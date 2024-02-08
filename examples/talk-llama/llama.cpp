@@ -1244,7 +1244,7 @@ static ggml_backend_buffer_type_t llama_default_buffer_type(int n_gpu_layers) {
 struct llama_state {
     llama_state() {
 #ifdef GGML_USE_METAL
-        ggml_metal_log_set_callback(log_callback, log_callback_user_data);
+        // ggml_metal_log_set_callback(log_callback, log_callback_user_data);
 #endif
     }
 
@@ -10954,7 +10954,7 @@ void llama_log_set(ggml_log_callback log_callback, void * user_data) {
     g_state.log_callback = log_callback ? log_callback : llama_log_callback_default;
     g_state.log_callback_user_data = user_data;
 #ifdef GGML_USE_METAL
-    ggml_metal_log_set_callback(g_state.log_callback, g_state.log_callback_user_data);
+    // ggml_metal_log_set_callback(g_state.log_callback, g_state.log_callback_user_data);
 #endif
 }
 
